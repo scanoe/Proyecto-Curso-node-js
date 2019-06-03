@@ -18,7 +18,9 @@ app.use(express.static(dirpublico))
 
  app.get('/', function (req, res) {
    console.log(dirpublico)
-   res.sendfile(dirpublico+"/NuevoCurso.html")
+   //res.sendfile(dirpublico+"/NuevoCurso.html")
+
+   res.render("NuevoCurso.hbs")
  })
 
 
