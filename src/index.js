@@ -1,14 +1,17 @@
 // const { argv }= require('./yargs');
- const model= require('./../Model/IngresarCursoModel')
+ const modeloIngresoCurso= require('./../Model/IngresarCursoModel')
+ const modelIngresoUsuario = require('./../Model/IngresarUsuarioModel')
  const express = require('express')
  const app = express()
  const path= require('path')
  const hbs = require('hbs')
+ const bodyParser = require("body-parser")
  const helpers = require('./Helpers')
- console.log(__dirname)
+
  const dirartials=path.join(__dirname+'../partials');
 hbs.registerPartials('C:/Users/Sebastian/Desktop/node/proyecto curso/partials');
  app.set('view engine','hbs')
+ app.use(bodyParser.urlencoded({extended :false}))
 console.log( __dirname)
 
 
@@ -16,25 +19,65 @@ console.log( __dirname)
 app.use(express.static(dirpublico))
 
 
- app.get('/', function (req, res) {
-   console.log(dirpublico)
-   //res.sendfile(dirpublico+"/NuevoCurso.html")
+app.get('/', function (req, res) {
+  
+  res.render("Login.hbs")
+})
 
+app.post('/login',function (req,res) {
+  let datos = req.body
+  
+  let consulta = modelIngresoUsuario.ConsultarUsuarios()
+
+  let  existe = consulta.find(C => (C.usuario == datos.user && C.password ==datos.password));
+
+  if(existe){
+    console.log(existe)
+    if(existe.rol=='coordinador'){
+
+    res.render('PaginaPrincipalCoordinador.hbs')
+    }else if(existe.rol=='aspirante'){
+      res.send('pagina del aspirante')
+    }
+
+  }else{
+
+    res.send('ususario invalido')
+  }
+
+  
+
+})
+
+ app.get('/NuevoCurso', function (req, res) {
+  
    res.render("NuevoCurso.hbs")
  })
+ app.get('/NuevoUsuario', function (req, res) {
+
+  res.render('NuevoUsuario.hbs')
+})
 
 
  app.get('/IngresarCurso', function (req, res) {
      console.log(req.query)
-     let resp = model.CrearCurso(req.query)
+     let resp = modeloIngresoCurso.CrearCurso(req.query)
      res.send(resp)
   })
+
+  app.get('/IngresarUsuario', function (req, res) {
+    console.log(req.query)
+    let resp = modelIngresoUsuario.CrearUsuario(req.query)
+    res.send(resp)
+ })
+
+
   
   app.get('/ListaCursos', function (req, res) {
     
-   // console.log("holi hello"+model.ConsultarCursos())
+
     res.render('ListarCursos',{
-      Cursos: model.ConsultarCursos()
+      Cursos: modeloIngresoCurso.ConsultarCursos()
 
     })
  })
