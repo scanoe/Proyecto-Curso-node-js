@@ -35,9 +35,9 @@ app.post('/login',function (req,res) {
     console.log(existe)
     if(existe.rol=='coordinador'){
 
-    res.render('PaginaPrincipalCoordinador.hbs')
+    res.render('PaginaPrincipalCoordinador.hbs',{nombre :existe.nombre})
     }else if(existe.rol=='aspirante'){
-      res.send('pagina del aspirante')
+      res.render("PaginaPrincipalAspirante.hbs",{nombre :existe.nombre})
     }
 
   }else{
@@ -78,9 +78,20 @@ app.post('/login',function (req,res) {
 
     res.render('ListarCursos',{
       Cursos: modeloIngresoCurso.ConsultarCursos()
+      
 
     })
  })
+
+ app.get('/ListaCursosDisponibles', function (req, res) {
+    
+
+  res.render('ListarCursosDisponibles',{
+    Cursos: modeloIngresoCurso.ConsultarCursos()
+    
+
+  })
+})
 
 
 
