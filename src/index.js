@@ -21,7 +21,7 @@ app.use(express.static(dirpublico))
 
 app.get('/', function (req, res) {
   
-  res.render("Login.hbs")
+  res.render("Login.hbs",{mensaje: ''})
 })
 
 app.post('/login',function (req,res) {
@@ -35,14 +35,17 @@ app.post('/login',function (req,res) {
     console.log(existe)
     if(existe.rol=='coordinador'){
 
-    res.render('PaginaPrincipalCoordinador.hbs',{nombre :existe.nombre})
+    res.render('PaginaPrincipalCoordinador.hbs',{usuario :existe})
     }else if(existe.rol=='aspirante'){
-      res.render("PaginaPrincipalAspirante.hbs",{nombre :existe.nombre})
+
+      console.log('documento del aspirante'+ existe.documento)
+      res.render("PaginaPrincipalAspirante.hbs",{UsuarioID : existe.documento})
     }
 
   }else{
 
-    res.send('ususario invalido')
+  
+    res.render("Login.hbs",{mensaje: 'ususario invalido'})
   }
 
   
@@ -85,9 +88,10 @@ app.post('/login',function (req,res) {
 
  app.get('/ListaCursosDisponibles', function (req, res) {
     
-
+  console.log(req.query)
   res.render('ListarCursosDisponibles',{
-    Cursos: modeloIngresoCurso.ConsultarCursos()
+    Cursos: modeloIngresoCurso.ConsultarCursos(),
+    UsuarioID: req.query.UsuarioID
     
 
   })
