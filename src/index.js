@@ -1,6 +1,7 @@
 // const { argv }= require('./yargs');
  const modeloIngresoCurso= require('./../Model/IngresarCursoModel')
  const modelIngresoUsuario = require('./../Model/IngresarUsuarioModel')
+ const ModelCursoXUsuario = require('./../Model/CursoXUsuarioModel')
  const express = require('express')
  const app = express()
  const path= require('path')
@@ -8,14 +9,17 @@
  const bodyParser = require("body-parser")
  const helpers = require('./Helpers')
 
- const dirartials=path.join(__dirname+'../partials');
-hbs.registerPartials('C:/Users/Sebastian/Desktop/node/proyecto curso/partials');
+ const dirartials=path.join(__dirname,'../partials');
+ console.log(dirartials)
+ console.log('C:/Users/Sebastian/Desktop/node/proyecto curso/partials')
+hbs.registerPartials(dirartials);
  app.set('view engine','hbs')
  app.use(bodyParser.urlencoded({extended :false}))
-console.log( __dirname)
+
 
 
  const dirpublico = path.join(__dirname,'../public')
+ console.log(dirpublico)
 app.use(express.static(dirpublico))
 
 
@@ -95,6 +99,17 @@ app.post('/login',function (req,res) {
     
 
   })
+})
+
+
+app.post('/InscribirCurso', function (req, res) {
+  let datos = req.body
+  console.log(datos)
+  let resp = ModelCursoXUsuario.inscribirCurso(datos.Curso,datos.UsuarioID)
+
+  console.log (resp)
+  
+
 })
 
 

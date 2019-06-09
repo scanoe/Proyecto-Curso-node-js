@@ -111,3 +111,30 @@ hbs.registerHelper('NavbarAspirante', (UsuarioID) => {
 return texto
 
 })
+
+hbs.registerHelper('SelectCursos', (cursos,UsuarioID) => {
+
+texto =` <form action="/InscribirCurso?UsuarioID=${UsuarioID}" method="post">`+
+'<div class="form-group">'+
+'<label for="exampleFormControlSelect1">ID del curso </label>' +
+' <select class="form-control" id="curso">'
+
+
+
+cursos.forEach((curso)=> {
+
+  if (curso.estado =='disponible'){
+
+  texto = texto +`<option>${curso.id}</option>`
+
+}
+
+
+
+})
+texto= texto+`</select>
+<input type="submit" class="form-group" value="Registrar" name="submit" id="submit">
+</div>
+</form>`
+return texto
+})
