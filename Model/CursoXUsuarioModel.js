@@ -7,7 +7,7 @@ preparar();
 
 console.log(curso)
 console.log(usuario)
-let  existeid =listaCursosXusuario.find(C => (C.idCuso ==curso && idUsuario == usuario  ));
+let  existeid =listaCursosXusuario.find(C => (C.idCuso ==curso && C.idUsuario == usuario  ));
 if(existeid){console.log('El id existe')
 return 'El curso ya fue registrado pára este usuario'
 }
@@ -22,7 +22,7 @@ idUsuario :usuario,
 return 'Datos obligatorios faltantes';
  }
 
- listaCursosXusuario.push(listaCursosXusuario)
+ listaCursosXusuario.push(cursoXusuario)
 guardar();
 return 'ingreso exitoso'
 }

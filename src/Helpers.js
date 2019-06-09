@@ -10,7 +10,7 @@ hbs.registerHelper('ListarCursos', (Cursos) => {
     <div class="card">
     <div class="card-header" id="heading${i}">
       <h2 class="mb-0">
-        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse${1}" aria-expanded="true" aria-controls="collapse${1}">
+        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse${i}" aria-expanded="true" aria-controls="collapse${i}">
         <div class="text-left">  
         ${curso.nombre} <br>
           valor: ${curso.valor} <br>
@@ -47,7 +47,7 @@ hbs.registerHelper('ListarCursosDisponibles', (Cursos) => {
       <div class="card">
       <div class="card-header" id="heading${i}">
         <h2 class="mb-0">
-          <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse${i}" aria-expanded="true" aria-controls="collapse${1}">
+          <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse${i}" aria-expanded="true" aria-controls="collapse${i}">
           <div class="text-left">  
           ${curso.nombre} <br>
             valor: ${curso.valor} <br>
@@ -114,10 +114,10 @@ return texto
 
 hbs.registerHelper('SelectCursos', (cursos,UsuarioID) => {
 
-texto =` <form action="/InscribirCurso?UsuarioID=${UsuarioID}" method="post">`+
+texto =` <form action="/InscribirCurso" method="post">`+
 '<div class="form-group">'+
-'<label for="exampleFormControlSelect1">ID del curso </label>' +
-' <select class="form-control" id="curso">'
+'<label for="curso">ID del curso </label>' +
+' <select class="form-control" id="curso" name ="curso">'
 
 
 
@@ -133,6 +133,7 @@ cursos.forEach((curso)=> {
 
 })
 texto= texto+`</select>
+<input type = "text" name = "UsuarioID" value = '${UsuarioID}' />
 <input type="submit" class="form-group" value="Registrar" name="submit" id="submit">
 </div>
 </form>`

@@ -95,7 +95,8 @@ app.post('/login',function (req,res) {
   console.log(req.query)
   res.render('ListarCursosDisponibles',{
     Cursos: modeloIngresoCurso.ConsultarCursos(),
-    UsuarioID: req.query.UsuarioID
+    UsuarioID: req.query.UsuarioID,
+    mensaje:''
     
 
   })
@@ -104,11 +105,19 @@ app.post('/login',function (req,res) {
 
 app.post('/InscribirCurso', function (req, res) {
   let datos = req.body
-  console.log(datos)
-  let resp = ModelCursoXUsuario.inscribirCurso(datos.Curso,datos.UsuarioID)
+  
+console.log()
+  let resp = ModelCursoXUsuario.inscribirCurso(datos.curso,datos.UsuarioID)
 
   console.log (resp)
   
+  res.render('ListarCursosDisponibles',{
+    Cursos: modeloIngresoCurso.ConsultarCursos(),
+    UsuarioID: req.query.UsuarioID,
+    mensaje:resp
+    
+
+  })
 
 })
 
