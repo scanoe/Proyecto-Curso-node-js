@@ -3,29 +3,29 @@ const fs = require('fs')
 let listaUsuarios=[];
 
 const CrearUsuario =(usuario)=>{
-preparar();
-let  existeid =listaUsuarios.find(C => C.documento ==usuario.documento);
-if(existeid){console.log('El Documento de identidad ya existe')
-return 'El id existe'
-}
- user ={
-documento:usuario.documento,
-nombre :usuario.nombre,
-usuario :usuario.usuario,
-correo: usuario.correo,
-password:usuario.password,
-telefono:usuario.telefono,
-rol:'aspirante'
- }
- if(!(usuario.documento) || !(usuario.nombre)|| !(usuario.correo)|| !(usuario.telefono) || !(usuario.usuario)|| !(usuario.password) ){
+    preparar();
+    let  existeid =listaUsuarios.find(C => C.documento ==usuario.documento);
+    if(existeid){console.log('El Documento de identidad ya existe')
+    return 'El id existe'
+    }
+     user ={
+    documento:usuario.documento,
+    nombre :usuario.nombre,
+    usuario :usuario.usuario,
+    correo: usuario.correo,
+    password:usuario.password,
+    telefono:usuario.telefono,
+    rol:'aspirante'
+     }
+     if(!(usuario.documento) || !(usuario.nombre)|| !(usuario.correo)|| !(usuario.telefono) || !(usuario.usuario)|| !(usuario.password) ){
 
 
-return 'Datos obligatorios faltantes';
- }
+    return 'Datos obligatorios faltantes';
+     }
 
- listaUsuarios.push(user)
-guardar();
-return 'ingreso exitoso'
+     listaUsuarios.push(user)
+    guardar();
+    return 'ingreso exitoso'
 }
 
 const preparar=()=>{

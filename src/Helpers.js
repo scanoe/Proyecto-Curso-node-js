@@ -1,4 +1,7 @@
 const hbs = require('hbs');
+const modeloIngresoCurso= require('./../Model/IngresarCursoModel')
+const modelIngresoUsuario = require('./../Model/IngresarUsuarioModel')
+const modelCursoXUsuario = require('./../Model/CursoXUsuarioModel')
 
 hbs.registerHelper('ListarCursos', (Cursos) => {
  
@@ -73,9 +76,33 @@ hbs.registerHelper('ListarCursosDisponibles', (Cursos) => {
     i++;
   })
   return texto
+})
 
-
-
+hbs.registerHelper('ListarCursosInscritos', (CursosUsuario, UsuarioID) => {
+  let i = 1
+  let texto = "<div class='accordion' id='accordionExample'>"
+  CursosUsuario.forEach((cursoUsuario) => {
+    if (cursoUsuario.idUsuario == UsuarioID) {  
+      let Cursos = modeloIngresoCurso.ConsultarCursos();
+      let curso = Cursos.find(c => c.id == cursoUsuario.idCuso);
+      texto = texto + `
+      <div class="card">
+        <div class="card-header" id="heading${i}">
+          <h2 class="mb-0">
+            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse${i}" aria-expanded="true" aria-controls="collapse${i}">
+              <div class="text-left">  
+                <p>Curso:<p>${curso.nombre}<br>  
+                <a href="/EliminaCursoInscrito?idCuso=${cursoUsuario.idCuso}&UsuarioID=${UsuarioID}"c>Eliminar</a>           
+              </div>
+            </button>
+          </h2>
+       </div> 
+      </div> 
+    </div>  `
+    }  
+    i++;
+  })
+  return texto
 })
 
 
@@ -98,44 +125,72 @@ hbs.registerHelper('NavbarAspirante', (UsuarioID) => {
                   Cursos
               </a>
               <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                  <a class="dropdown-item" href="/ListaCursosDisponibles?UsuarioID=${UsuarioID}"c>ListaCursos</a>
-                  
+                  <a class="dropdown-item" href="/ListaCursosDisponibles?UsuarioID=${UsuarioID}"c>Cursos Disponibles</a>
+                  <a class="dropdown-item" href="/ListaCursosInscritos?UsuarioID=${UsuarioID}"c>Mis Cursos</a>
               </div>
           </li>
           
       </ul>
   </div>
 </nav>`
-
-
 return texto
 
 })
 
 hbs.registerHelper('SelectCursos', (cursos,UsuarioID) => {
+  texto =` <form action="/InscribirCurso" method="post">`+
+  '<div class="form-group">'+
+  '<label for="curso">ID del curso </label>' +
+  ' <select class="form-control" id="curso" name ="curso">'
 
-texto =` <form action="/InscribirCurso" method="post">`+
-'<div class="form-group">'+
-'<label for="curso">ID del curso </label>' +
-' <select class="form-control" id="curso" name ="curso">'
+  cursos.forEach((curso)=> {
 
+    if (curso.estado =='disponible'){
 
-
-cursos.forEach((curso)=> {
-
-  if (curso.estado =='disponible'){
-
-  texto = texto +`<option>${curso.id}</option>`
-
-}
-
-
-
+    texto = texto +`<option>${curso.id}</option>`
+  }
+  })
+  texto= texto+`</select>
+  <input type = "text" name = "UsuarioID" value = '${UsuarioID}' />
+  <input type="submit" class="form-group" value="Registrar" name="submit" id="submit">
+  </div>
+  </form>`
+  return texto
 })
-texto= texto+`</select>
-<input type = "text" name = "UsuarioID" value = '${UsuarioID}' />
-<input type="submit" class="form-group" value="Registrar" name="submit" id="submit">
-</div>
-</form>`
-return texto
+
+hbs.registerHelper('ListarInscritosxCursos', (Cursos) => {
+ 
+  let texto = "<div class='accordion' id='accordionExample'>"
+  let i = 1
+    Cursos.forEach(curso => {
+      let usuariosXCurso = modelCursoXUsuario.inscritos(curso.id);
+      console.log(usuariosXCurso);
+
+      if (curso.estado == 'disponible') {
+        texto = texto + `
+        <div class="card">
+          <div class="card-header" id="heading${i}">
+            <h2 class="mb-0">
+              <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse${i}" aria-expanded="true" aria-controls="collapse${i}">
+                <div class="text-left">  
+                ${curso.nombre} <br>
+                  valor: ${curso.valor} <br>
+                  Descripcion: ${curso.descripcion} 
+                </div>
+              </button>
+            </h2>
+          </div> 
+
+           <div id="collapse${i}" class="collapse" aria-labelledby="heading${i}" data-parent="#accordionExample">
+            <div class="card-body">
+              <p>Id de Usuarios: ${usuariosXCurso} </p>
+              <a href="/CierraCurso?id=${curso.id}"c>Cerrar Curso</a>           
+            </div>
+        </div>
+      </div>
+       `
+      }
+          i++;
+    })
+  return texto
 })
