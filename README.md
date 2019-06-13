@@ -6,3 +6,8 @@ Integrantes:
  Sebastian Cano Estrada
  
 Recuerde el uso de npm install para actualizar dependencias
+
+para el uso del aplicativo se debe de entrar a  sus diferentes opciones atraves de la barra de navegacion navvar la cual dice opciones
+
+
+Cordialmente Equipo Full stack voyage
