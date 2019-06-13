@@ -194,3 +194,62 @@ hbs.registerHelper('ListarInscritosxCursos', (Cursos) => {
     })
   return texto
 })
+
+
+hbs.registerHelper('ListarInscritosEnCurso', (Usuarios) => {
+
+  let nombreCurso = modeloIngresoCurso.ConsultarCursos().find(f => f.id == Usuarios[0].idCuso).nombre;
+
+  let texto = "<h3>" + nombreCurso + "</h3><br> <div class='accordion' id='accordionExample'>"
+  let i = 1
+  Usuarios.forEach(usuario => {
+
+      let usuariosXCurso = modelCursoXUsuario.inscritos(usuario.id);
+      texto = texto + `
+        <div class="card">
+          <div class="card-header" id="heading${i}">
+            <h2 class="mb-0">
+              <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse${i}" aria-expanded="true" aria-controls="collapse${i}">
+                <div class="text-left">  
+                <p>Id De Usuario: </p>${usuario.idUsuario} <br>
+                </div>
+              </button>
+            </h2>
+          </div> 
+         </div> `
+      i++;
+    })  
+    
+    return texto
+})
+
+hbs.registerHelper('FormularioActualizarUsuario', (Usuario) => {
+  texto = `<div  class="container">
+            <h1> Actualizar datos de usuario</h1>
+            <form action="/ActualizarUser">
+              <div class="form-group">
+                  Documento <br>
+                  <input type="hidden" class="form-group" name="documento" id="documento" value="${Usuario.documento}" required><br>
+                  Nombre <br>
+                  <input type="text"class="form-group" name="nombre" id="nombre" value="${Usuario.nombre}" required><br>
+                  Usuario <br>
+                  <input type="text"class="form-group" name="usuario" id="usuario" value="${Usuario.usuario}" required><br>
+                   contaseña <br>
+                  <input type="password" class="form-group" name="password" id="password" value="${Usuario.password}" required><br>
+                  Correo <br>
+                  <input type="text"class="form-group" name="correo" id="correo" value="${Usuario.correo}" required><br>
+                  Teléfono <br>
+                  <input type="tel" class= "form-group" name="telefono" id="telefono" value="${Usuario.telefono}" required><br><br>
+                  <select class="form-control" id="rol" name ="rol">'
+                  <option value="aspirante">aspirante</option>
+                  <option value="docente">docente</option>
+                  
+                </select>
+                 
+                  <input type="submit" class="form-group" value="Enviar" name="sunbmit" id="submit">
+
+              </div>
+            </form>
+            </div>`
+    return texto;        
+})

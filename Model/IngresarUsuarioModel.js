@@ -55,8 +55,24 @@ return listaUsuarios
 
 }
 
+const actualizarUsuario = (usuario) =>{
+    preparar()
+    let encontrado = listaUsuarios.find(f => f.documento == usuario.documento);
+    if (!encontrado){
+        
+        return 'El usuario no ha sido encontrado'
+    }else{
+        encontrado['nombre'] = usuario.nombre;
+        encontrado['usuario'] = usuario.usuario;
+        encontrado['correo'] = usuario.correo;
+        encontrado['password'] = usuario.password;
+        encontrado['telefono'] = usuario.telefono;
+        encontrado['rol'] = usuario.rol;
+        guardar()
+        console.log(listaUsuarios)
+        return 'El usuario ha sido Actualizado'
+    }
+    
+}
 
-
-
-
-module.exports={CrearUsuario,ConsultarUsuarios};
+module.exports={CrearUsuario,ConsultarUsuarios,actualizarUsuario};

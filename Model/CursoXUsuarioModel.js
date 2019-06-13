@@ -57,12 +57,14 @@ return listaCursosXusuario
 const eliminar = (id, usuario) =>{
     preparar();   
     let indice =listaCursosXusuario.findIndex(buscar => buscar.idCuso==id && buscar.idUsuario==usuario);
-    console.log(indice);
     listaCursosXusuario.splice(indice,1);
     guardar();
+    console.log('*******')
+    console.log(listaCursosXusuario)
     return listaCursosXusuario; 
-}
 
+} 
+ 
 const inscritos = (idCurso) =>{
     preparar();
     let inscritos = '';
@@ -74,4 +76,5 @@ const inscritos = (idCurso) =>{
     return inscritos;
 }
 
-module.exports={inscribirCurso,ConsultarCursosXususario,eliminar,inscritos};
+
+module.exports={inscribirCurso,ConsultarCursosXususario,eliminar,inscritos}; 

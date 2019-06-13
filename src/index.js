@@ -119,6 +119,21 @@ app.get('/EliminaCursoInscrito', function (req, res) {
   })
 })
 
+app.get('/EliminaUsuarioCurso', function (req, res) {
+  res.render('EliminarUsuarioxCurso')
+})
+
+app.get('/EliminaUsuarioDeCurso', function (req, res) {
+  let lista = modelCursoXUsuario.eliminar(req.query.idCuso, req.query.UsuarioID)
+  console.log('-------')
+  console.log(lista)
+  res.render('ListarInscritosEnCurso',{
+    UsuariosxCurso: lista.filter(filtro => filtro.idCuso == req.query.idCuso),
+    UsuarioID: req.query.UsuarioID,
+    mensaje:''
+  })
+})
+
 app.get('/ListaInscritosxCursos', function (req, res) {
   res.render('ListarInscritosxCursos',{
     Cursos: modeloIngresoCurso.ConsultarCursos(),
@@ -131,6 +146,36 @@ app.get('/CierraCurso', function (req, res) {
     Cursos: cerrar,
   })
 })
+
+app.get('/EditaUsuario', function (req, res) {    
+  res.render('EditarUsuario')
+})
+
+app.get('/VistaActualizarUsuario', function (req, res) {    
+  let usuario = modelIngresoUsuario.ConsultarUsuarios().find(f => f.documento == req.query.UsuarioID)
+  console.log(req.query.UsuarioID)
+  console.log('.....')
+  console.log(usuario)
+  res.render('ActualizarUsuario',{
+    usuario: usuario
+  })
+
+})
+
+app.get('/ActualizarUser', function (req, res) {
+  console.log(req.query)   
+  let resp = modelIngresoUsuario.actualizarUsuario(req.query)
+  res.render('ResultadoActualizacion', {
+    resultado: resp
+  })
+})
+
+app.get('/CursosOfrecidos', function (req, res) {    
+  res.render('CursosOfrecidos', {
+    Cursos : modeloIngresoCurso.ConsultarCursos()
+  })
+})
+
 
 app.listen(3000)
 
