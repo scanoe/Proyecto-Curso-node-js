@@ -1,5 +1,6 @@
 const fs = require('fs')
-
+const mongoose = require('mongoose');
+const uniqueValidator = require('mongoose-unique-validator');
 let listaCursos=[];
 
 const CrearCurso =(curso)=>{
@@ -61,4 +62,38 @@ const CerrarCurso = (idCurso) => {
    return  listaCursos;
 }
 
-module.exports={CrearCurso,ConsultarCursos,CerrarCurso};
+
+
+/// nuevo
+
+const schema = mongoose.Schema;
+const cursoSchema = new schema({
+    id:{
+
+        type :Number,
+        require:true,
+        unique:true
+    },
+    nombre :{
+
+        type :String,
+        require:true
+    },
+    descripcion:{
+
+        type :String,
+        require:true
+    },
+    valor : {
+
+        type :Number,
+        require:true
+    },
+    modalidad : String,
+    Intensidad: Number,
+    estado: String
+     })
+     cursoSchema.plugin(uniqueValidator)
+const curso = mongoose.model("curso",cursoSchema)
+
+module.exports={CrearCurso,ConsultarCursos,CerrarCurso,curso};

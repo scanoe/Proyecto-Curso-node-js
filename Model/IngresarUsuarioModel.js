@@ -1,5 +1,7 @@
 const fs = require('fs')
 
+const mongoose = require('mongoose');
+const uniqueValidator = require('mongoose-unique-validator');
 let listaUsuarios=[];
 
 const CrearUsuario =(usuario)=>{
@@ -75,4 +77,46 @@ const actualizarUsuario = (usuario) =>{
     
 }
 
-module.exports={CrearUsuario,ConsultarUsuarios,actualizarUsuario};
+
+// desde aca
+
+const schema = mongoose.Schema;
+const usuarioSchema = new schema({
+    documento: {
+        type :Number,
+        require:true,
+        unique:true
+    },
+    nombre :{
+        type :String,
+        require:true
+    },
+    usuario :{
+        type :String,
+        require:true
+    },
+    correo:{
+        type :String,
+        require:true
+    },
+    password:{
+        type :String,
+        require:true
+    },
+    telefono:{
+        type :String,
+        require:true
+    },
+    rol:{
+        type :String,
+        require:true
+
+    }
+     
+
+})
+
+usuarioSchema.plugin(uniqueValidator)
+const Usuario = mongoose.model("Usuario",usuarioSchema);
+
+module.exports={CrearUsuario,ConsultarUsuarios,actualizarUsuario , Usuario};

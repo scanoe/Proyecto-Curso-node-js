@@ -7,6 +7,7 @@ const app = express()
 const path= require('path')
 const hbs = require('hbs')
 const bodyParser = require("body-parser")
+const mongoose = require('mongoose');
 const helpers = require('./Helpers')
 
 const dirartials=path.join(__dirname,'../partials');
@@ -32,19 +33,32 @@ app.post('/login',function (req,res) {
     
   let consulta = modelIngresoUsuario.ConsultarUsuarios()
 
-  let  existe = consulta.find(C => (C.usuario == datos.user && C.password == datos.password));
+ 
+  //let  existe = consulta.find(C => (C.usuario == datos.user && C.password == datos.password));
+  let existe
+ modelIngresoUsuario.Usuario.findOne({usuario: datos.user, password : datos.password })
+.exec((err,existe)=>{
 
-  if(existe){
-    console.log(existe)
-    if(existe.rol=='coordinador'){
-      res.render('PaginaPrincipalCoordinador.hbs',{usuario :existe})
-    }else if(existe.rol=='aspirante'){
-      console.log('documento del aspirante'+ existe.documento)
-      res.render("PaginaPrincipalAspirante.hbs",{UsuarioID : existe.documento})
-    }
-    }else{  
-      res.render("Login.hbs",{mensaje: 'usuario invalido'})
-    }
+  if (err){console.log(err)}
+  else{
+
+    if(existe){
+      //console.log(existe)
+      if(existe.rol=='coordinador'){
+        res.render('PaginaPrincipalCoordinador.hbs',{usuario :existe})
+      }else if(existe.rol=='aspirante'){
+        console.log('documento del aspirante'+ existe.documento)
+        res.render("PaginaPrincipalAspirante.hbs",{UsuarioID : existe.documento})
+      }
+      }else{  
+        res.render("Login.hbs",{mensaje: 'usuario invalido'})
+      }
+
+
+  }
+})
+
+ 
 
 })
 
@@ -59,16 +73,61 @@ app.get('/NuevoUsuario', function (req, res) {
 app.get('/IngresarCurso', function (req, res) {
   console.log(req.query)
   let resp = modeloIngresoCurso.CrearCurso(req.query)
+  let curso = new modeloIngresoCurso.curso(
+    {
+    id:req.query.id,
+    nombre :req.query.nombre,
+    descripcion: req.query.descripcion,
+    valor : req.query.valor,
+    modalidad : req.query.modalidad,
+    Intensidad: req.query.Intensidad,
+    estado:'disponible'
+  })
+  curso.save((err,resp)=>{
+
+    if (err){
+      console.log("Error de acceso a la base de datos")
+      res.send("Error de insercion de curso")
+    } else(
+      modeloIngresoCurso.curso.find({}).exec((err,resp)=>{
+        console.log(res)
+        res.render('ListarCursos',{
+          Cursos: resp
+        })
+
+      })
+
+    )
+  })
+/*
   res.render('ListarCursos',{
     Cursos: modeloIngresoCurso.ConsultarCursos()
   })
+*/
 })
 
 app.get('/IngresarUsuario', function (req, res) {
   console.log(req.query)
   let resp = modelIngresoUsuario.CrearUsuario(req.query)
+  let estudiante = new modelIngresoUsuario.Usuario({
+    documento:req.query.documento,
+    nombre :req.query.nombre,
+    usuario :req.query.usuario,
+    correo: req.query.correo,
+    password:req.query.password,
+    telefono:req.query.telefono,
+    rol:'aspirante'
+     })
+     estudiante.save((err,resul)=>{
+       if (err){
+         console.log("Error de insercion")
+       }
+       else{
+        res.render("Login.hbs", {mensaje: 'Su Registro fue Exitoso ahora puede ingresar con su usuario y contraseña'})
+       }
+     });
   //res.send(resp)
-  res.render("Login.hbs", {mensaje: 'Su Registro fue Exitoso ahora puede ingresar con su usuario y contraseña'})
+ // res.render("Login.hbs", {mensaje: 'Su Registro fue Exitoso ahora puede ingresar con su usuario y contraseña'})
 })
 
 app.get('/ListaCursos', function (req, res) {
@@ -176,7 +235,17 @@ app.get('/CursosOfrecidos', function (req, res) {
   })
 })
 
+mongoose.connect('mongodb://localhost:27017/EducacionContinua', {useNewUrlParser: true},(err,resultado)=>{
 
+
+if(err){
+
+  console.log(err)
+}else{
+
+    console.log("Conectado a mongo")
+}
+});
 app.listen(3000)
 
 
