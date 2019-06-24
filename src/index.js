@@ -131,51 +131,166 @@ app.get('/IngresarUsuario', function (req, res) {
 })
 
 app.get('/ListaCursos', function (req, res) {
+  modeloIngresoCurso.curso.find({}).exec((err,query)=>{
+    if (err){
+      res.send(err.message)
+    }else{
+      res.render('ListarCursos',{
+        Cursos: query
+      })
+    }
+
+  })
+/*
   res.render('ListarCursos',{
     Cursos: modeloIngresoCurso.ConsultarCursos()
   })
+  */
 })
 
 app.get('/ListaCursosDisponibles', function (req, res) {
   console.log(req.query)
+  modeloIngresoCurso.curso.find({}).exec((err,query)=>{
+    if (err){
+      res.send(err.message)
+    }else{
+      res.render('ListarCursosDisponibles',{
+        Cursos: query,
+        UsuarioID: req.query.UsuarioID,
+        mensaje:''
+      })
+    }
+
+  })
+
+/*
+
   res.render('ListarCursosDisponibles',{
     Cursos: modeloIngresoCurso.ConsultarCursos(),
     UsuarioID: req.query.UsuarioID,
     mensaje:''
-  })
+  })*/
 })
 
 app.post('/InscribirCurso', function (req, res) {
   let datos = req.body
-  
-  console.log()
-  let resp = modelCursoXUsuario.inscribirCurso(datos.curso,datos.UsuarioID)
+ // let resp = modelCursoXUsuario.inscribirCurso(datos.curso,datos.UsuarioID)
+modeloIngresoCurso.curso.find({}).exec((err,query)=>{
+  if(err){
 
-  console.log (resp)
+    res.send("Error 404")
+  }else{
+    if(!(datos.curso) || !(datos.UsuarioID) ){
+      res.render('ListarCursosDisponibles',{
+        Cursos: query,
+        UsuarioID: req.body.UsuarioID,
+        mensaje:'Datos obligatorios faltantes'
+      })
+       }else{
+        let cursoXusuario = new modelCursoXUsuario.cursoxusuario({
+          idCuso:datos.curso,
+          idUsuario :datos.UsuarioID,
+        })
+        cursoXusuario.save((err,resp)=>{
+          if (err){
+            res.render('ListarCursosDisponibles',{
+              Cursos: query,
+              UsuarioID: req.body.UsuarioID,
+              mensaje:'El curso ya fue inscrito'
+            })
+          }else{
+            console.log("aca "+query)
+            res.render('ListarCursosDisponibles',{
+              Cursos: query,
+              UsuarioID: req.body.UsuarioID,
+              mensaje:'Curso Inscrito con exito'
+            })
+          }
+        })
+       }
+  }
+})
+/*
   
   res.render('ListarCursosDisponibles',{
     Cursos: modeloIngresoCurso.ConsultarCursos(),
     UsuarioID: req.body.UsuarioID,
     mensaje:resp
   })
+
+  */
 })
 
 app.get('/ListaCursosInscritos', function (req, res) {
   //console.log(req.query)
+  modelCursoXUsuario.cursoxusuario.find({}).exec((err,query)=>{
+    if (err){
+
+      res.send("Error 404")
+    }else{
+
+      modeloIngresoCurso.curso.find({}).exec((err,cursos)=>{
+        if (err){
+          res.send("Error 404")
+        }else{
+
+          res.render('ListarCursosInscritos',{
+            CursosUsuario: query,
+            UsuarioID: req.query.UsuarioID,
+            listacursos:cursos,
+            mensaje:''
+          })
+        }
+
+
+      })
+    }
+
+
+    
+  })
+ /*
   res.render('ListarCursosInscritos',{
     CursosUsuario: modelCursoXUsuario.ConsultarCursosXususario(),
     UsuarioID: req.query.UsuarioID,
     mensaje:''
-  })
+  })*/
 })
 
 app.get('/EliminaCursoInscrito', function (req, res) {
-  let lista = modelCursoXUsuario.eliminar(req.query.idCuso, req.query.UsuarioID)
+  //let lista = modelCursoXUsuario.eliminar(req.query.idCuso, req.query.UsuarioID)
+  modelCursoXUsuario.cursoxusuario.findOneAndDelete({idCuso:req.query.idCuso,idUsuario:req.query.UsuarioID}).exec((err)=>{
+    if (err){
+      res.send("Error 404")
+    }else{
+      modelCursoXUsuario.cursoxusuario.find({}).exec((err,lista)=>{
+          if(err){
+            res.send("Error 404")
+          }else{
+            modeloIngresoCurso.curso.find({}).exec((err,cursos)=>{
+              if (err){
+                res.send("Error 404")
+              }else{
+                res.render('ListarCursosInscritos',{
+                  CursosUsuario: lista,
+                  UsuarioID: req.query.UsuarioID,
+                  listacursos:cursos,
+                  mensaje:''
+                })
+              }
+            })
+ 
+          }
+      })
+    }
+  })
+
+/*
   res.render('ListarCursosInscritos',{
     CursosUsuario: lista,
     UsuarioID: req.query.UsuarioID,
     mensaje:''
-  })
+  })*/
 })
 
 app.get('/EliminaUsuarioCurso', function (req, res) {
@@ -194,9 +309,36 @@ app.get('/EliminaUsuarioDeCurso', function (req, res) {
 })
 
 app.get('/ListaInscritosxCursos', function (req, res) {
+modeloIngresoCurso.curso.find({}).exec((err,query)=>{
+  if (err){
+    res.send("Error")
+  }else{
+modelCursoXUsuario.cursoxusuario.find({}).exec((err,result)=>{
+if (err){
+  res.send ("error")
+}else{
+  res.render('ListarInscritosxCursos',{
+    Cursos: query,
+    cursosxUsuario: result
+  })
+
+}
+
+})
+/*
+    res.render('ListarInscritosxCursos',{
+      Cursos: query,
+    })*/
+
+
+
+  }
+})
+/*
   res.render('ListarInscritosxCursos',{
     Cursos: modeloIngresoCurso.ConsultarCursos(),
   })
+  */
 })
 
 app.get('/CierraCurso', function (req, res) {
@@ -230,9 +372,25 @@ app.get('/ActualizarUser', function (req, res) {
 })
 
 app.get('/CursosOfrecidos', function (req, res) {    
+
+  modeloIngresoCurso.curso.find({}).exec((err,query)=>{
+    if (err){
+      res.send(err.message)
+    }else{
+      res.render('CursosOfrecidos', {
+        Cursos : query
+      })
+    }
+
+  })
+
+
+
+/*
   res.render('CursosOfrecidos', {
     Cursos : modeloIngresoCurso.ConsultarCursos()
-  })
+  }) */
+
 })
 
 mongoose.connect('mongodb://localhost:27017/EducacionContinua', {useNewUrlParser: true},(err,resultado)=>{

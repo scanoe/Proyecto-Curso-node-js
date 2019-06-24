@@ -78,12 +78,12 @@ hbs.registerHelper('ListarCursosDisponibles', (Cursos) => {
   return texto
 })
 
-hbs.registerHelper('ListarCursosInscritos', (CursosUsuario, UsuarioID) => {
+hbs.registerHelper('ListarCursosInscritos', (CursosUsuario, UsuarioID,listacursos) => {
   let i = 1
   let texto = "<div class='accordion' id='accordionExample'>"
   CursosUsuario.forEach((cursoUsuario) => {
     if (cursoUsuario.idUsuario == UsuarioID) {  
-      let Cursos = modeloIngresoCurso.ConsultarCursos();
+      let Cursos =listacursos;
       let curso = Cursos.find(c => c.id == cursoUsuario.idCuso);
       texto = texto + `
       <div class="card">
@@ -158,14 +158,13 @@ hbs.registerHelper('SelectCursos', (cursos,UsuarioID) => {
   return texto
 })
 
-hbs.registerHelper('ListarInscritosxCursos', (Cursos) => {
+hbs.registerHelper('ListarInscritosxCursos', (Cursos,cursosusuario) => {
  
   let texto = "<div class='accordion' id='accordionExample'>"
+ 
   let i = 1
     Cursos.forEach(curso => {
-      let usuariosXCurso = modelCursoXUsuario.inscritos(curso.id);
-      console.log(usuariosXCurso);
-
+      let usuariosXCurso = modelCursoXUsuario.inscritos(curso.id,cursosusuario);
       if (curso.estado == 'disponible') {
         texto = texto + `
         <div class="card">
@@ -179,7 +178,7 @@ hbs.registerHelper('ListarInscritosxCursos', (Cursos) => {
                 </div>
               </button>
             </h2>
-          </div> 
+          </div> |
 
            <div id="collapse${i}" class="collapse" aria-labelledby="heading${i}" data-parent="#accordionExample">
             <div class="card-body">

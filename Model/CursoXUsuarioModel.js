@@ -1,5 +1,8 @@
 const fs = require('fs')
 
+const mongoose = require('mongoose');
+const uniqueValidator = require('mongoose-unique-validator');
+
 let listaCursosXusuario=[];
 
 const inscribirCurso =(curso,usuario)=>{
@@ -64,7 +67,7 @@ const eliminar = (id, usuario) =>{
     return listaCursosXusuario; 
 
 } 
- 
+ /*
 const inscritos = (idCurso) =>{
     preparar();
     let inscritos = '';
@@ -74,7 +77,47 @@ const inscritos = (idCurso) =>{
         }
     })
     return inscritos;
+}*/
+
+
+
+//nuevo
+
+const schema = mongoose.Schema;
+const cursoXusuarioschema = new schema(
+    {
+        idCuso:{
+
+            type :Number,
+            require:true,
+          
+        },
+        idUsuario :{
+
+            type :Number,
+            require:true,
+           
+        },
+    
+         }
+
+)
+cursoXusuarioschema.plugin(uniqueValidator)
+cursoXusuarioschema.index({idCuso:1,idUsuario:1},{unique: true})
+
+const cursoxusuario = mongoose.model("cursoxusuario",cursoXusuarioschema)
+        
+const inscritos = (idCurso,cursosusuario) =>{
+  
+    let inscritos = '';
+    cursosusuario.forEach(i => { 
+       if (i.idCuso == idCurso){
+        inscritos = inscritos + i.idUsuario + ',';
+        }
+    })
+    return inscritos;
 }
 
 
-module.exports={inscribirCurso,ConsultarCursosXususario,eliminar,inscritos}; 
+
+module.exports={inscribirCurso,ConsultarCursosXususario,eliminar,inscritos,cursoxusuario}; 
