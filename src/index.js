@@ -374,10 +374,42 @@ if (err){
 })
 
 app.get('/CierraCurso', function (req, res) {
-  let cerrar = modeloIngresoCurso.CerrarCurso(req.query.id)
+  //let cerrar = modeloIngresoCurso.CerrarCurso(req.query.id)
+  modeloIngresoCurso.curso.findOneAndUpdate({id:req.query.id},{$set:{estado : 'Cerrado'}},{new:true} ).exec((err,result)=>{
+    if(err){
+
+      res.send("Error 404")
+    }else{
+      modeloIngresoCurso.curso.find({}).exec((err,query)=>{
+        if(err){
+          res.send("Error 404")
+        }else{
+          modelCursoXUsuario.cursoxusuario.find({}).exec((err,result)=>{
+            if (err){
+              res.send ("error")
+            }else{
+              res.render('ListarInscritosxCursos',{
+                Cursos: query,
+                cursosxUsuario: result
+              })
+            
+            }
+            
+            })
+         
+        }
+
+      })
+
+    }
+
+
+  })
+  /*
   res.render('ListarInscritosxCursos',{
     Cursos: cerrar,
-  })
+  })*/
+
 })
 
 app.get('/EditaUsuario', function (req, res) {    
