@@ -70,28 +70,28 @@ const schema = mongoose.Schema;
 const cursoSchema = new schema({
     id:{
 
-        type :Number,
+        type :"String",
         require:true,
         unique:true
     },
     nombre :{
 
-        type :String,
+        type :"String",
         require:true
     },
     descripcion:{
 
-        type :String,
+        type :"String",
         require:true
     },
     valor : {
 
-        type :Number,
+        type :"Number",
         require:true
     },
-    modalidad : String,
-    Intensidad: Number,
-    estado: String
+    modalidad : "String",
+    Intensidad: "String",
+    estado: "String"
      })
      cursoSchema.plugin(uniqueValidator)
 const curso = mongoose.model("curso",cursoSchema)

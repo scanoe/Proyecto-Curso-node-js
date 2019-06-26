@@ -88,13 +88,13 @@ const cursoXusuarioschema = new schema(
     {
         idCuso:{
 
-            type :Number,
+            type :"String",
             require:true,
           
         },
         idUsuario :{
 
-            type :Number,
+            type :"String",
             require:true,
            
         },

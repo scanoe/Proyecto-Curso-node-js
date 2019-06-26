@@ -298,14 +298,46 @@ app.get('/EliminaUsuarioCurso', function (req, res) {
 })
 
 app.get('/EliminaUsuarioDeCurso', function (req, res) {
-  let lista = modelCursoXUsuario.eliminar(req.query.idCuso, req.query.UsuarioID)
+// let lista = modelCursoXUsuario.eliminar(req.query.idCuso, req.query.UsuarioID)
+  console.log ("curso :"+req.query.idCuso)
   console.log('-------')
-  console.log(lista)
+  console.log("usuario :"+req.query.UsuarioID)
+  modelCursoXUsuario.cursoxusuario.findOneAndDelete({idCuso:req.query.idCuso,idUsuario:req.query.UsuarioID}).exec((err)=>{
+    if (err){
+      res.send("Error 404")
+    }else{
+      modelCursoXUsuario.cursoxusuario.find({idCuso : '12'}).exec((err,lista)=>{
+          if(err){
+            res.send("Error 404")
+          }else{
+            modeloIngresoCurso.curso.findOne({id : '1'}).exec((err,cursos)=>{
+              if (err){
+                res.send("Error 404")
+              }else{
+                console.log(cursos)
+                console.log(lista)
+                res.render('ListarInscritosEnCurso',{
+                  UsuariosxCurso: lista,
+                  UsuarioID: req.query.UsuarioID,
+                  curso : cursos,
+                  mensaje:''
+                })
+              }
+            })
+            
+          }
+      })
+    }
+  })
+  
+
+  /*
   res.render('ListarInscritosEnCurso',{
     UsuariosxCurso: lista.filter(filtro => filtro.idCuso == req.query.idCuso),
     UsuarioID: req.query.UsuarioID,
     mensaje:''
-  })
+  })*/
+
 })
 
 app.get('/ListaInscritosxCursos', function (req, res) {

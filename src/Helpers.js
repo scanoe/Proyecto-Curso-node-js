@@ -195,15 +195,16 @@ hbs.registerHelper('ListarInscritosxCursos', (Cursos,cursosusuario) => {
 })
 
 
-hbs.registerHelper('ListarInscritosEnCurso', (Usuarios) => {
+hbs.registerHelper('ListarInscritosEnCurso', (Usuarios,curso) => {
 
-  let nombreCurso = modeloIngresoCurso.ConsultarCursos().find(f => f.id == Usuarios[0].idCuso).nombre;
-
+ // let nombreCurso = modeloIngresoCurso.ConsultarCursos().find(f => f.id == Usuarios[0].idCuso).nombre;
+ console.log("aca esto el error"+curso)
+ let nombreCurso = curso.nombre
   let texto = "<h3>" + nombreCurso + "</h3><br> <div class='accordion' id='accordionExample'>"
   let i = 1
   Usuarios.forEach(usuario => {
 
-      let usuariosXCurso = modelCursoXUsuario.inscritos(usuario.id);
+     // let usuariosXCurso = modelCursoXUsuario.inscritos(usuario.id);
       texto = texto + `
         <div class="card">
           <div class="card-header" id="heading${i}">

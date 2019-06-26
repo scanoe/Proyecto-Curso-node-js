@@ -83,32 +83,32 @@ const actualizarUsuario = (usuario) =>{
 const schema = mongoose.Schema;
 const usuarioSchema = new schema({
     documento: {
-        type :Number,
+        type :"String",
         require:true,
         unique:true
     },
     nombre :{
-        type :String,
+        type :"String",
         require:true
     },
     usuario :{
-        type :String,
+        type :"String",
         require:true
     },
     correo:{
-        type :String,
+        type :"String",
         require:true
     },
     password:{
-        type :String,
+        type :"String",
         require:true
     },
     telefono:{
-        type :String,
+        type :"String",
         require:true
     },
     rol:{
-        type :String,
+        type :"String",
         require:true
 
     }
