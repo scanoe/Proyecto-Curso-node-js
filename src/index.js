@@ -412,27 +412,71 @@ app.get('/CierraCurso', function (req, res) {
 
 })
 
-app.get('/EditaUsuario', function (req, res) {    
-  res.render('EditarUsuario')
+app.get('/EditaUsuario', function (req, res) {
+  modelIngresoUsuario.Usuario.find({rol:{$ne: 'coordinador'}}).exec((err,query)=>{
+    if(err){
+      res.send("Error 404")
+    }else{
+
+      res.render('EditarUsuario',{
+
+        usuarios:query
+      })
+    }
+    
+  })   
+  
 })
 
 app.get('/VistaActualizarUsuario', function (req, res) {    
-  let usuario = modelIngresoUsuario.ConsultarUsuarios().find(f => f.documento == req.query.UsuarioID)
-  console.log(req.query.UsuarioID)
-  console.log('.....')
-  console.log(usuario)
-  res.render('ActualizarUsuario',{
-    usuario: usuario
+  //let usuario = modelIngresoUsuario.ConsultarUsuarios().find(f => f.documento == req.query.UsuarioID)
+//  console.log(req.query.UsuarioID)
+//  console.log('.....')
+//  
+  modelIngresoUsuario.Usuario.findOne({documento:req.query.UsuarioID}).exec((err,usuario)=>{
+    if(err){
+      res.send("Error 404")
+    }else{
+
+    }
+    console.log(usuario)
+    res.render('ActualizarUsuario',{
+      usuario: usuario
+    })
   })
+  
 
 })
 
 app.get('/ActualizarUser', function (req, res) {
   console.log(req.query)   
-  let resp = modelIngresoUsuario.actualizarUsuario(req.query)
+  //let resp = modelIngresoUsuario.actualizarUsuario(req.query)
+  let usuario = {documento:req.query.documento,
+    nombre:req.query.nombre,
+    usuario:req.query.usuario,
+    password:req.query.password,
+    correo:req.query.correo,
+    telefono:req.query.telefono,
+    rol:req.query.rol,
+  }
+  modelIngresoUsuario.Usuario.findOneAndUpdate({documento:req.query.documento},usuario,{new:true}).exec((err,result)=>{
+
+    if (err){
+      res.render('ResultadoActualizacion', {
+      resultado: "Error de actualizacion "
+    })
+  }else{
+    console.log("datos de actualizacion" +result)
+    res.render('ResultadoActualizacion', {
+      resultado: "Actualizacion correcta"
+    })
+  }
+  })
+  /*
   res.render('ResultadoActualizacion', {
     resultado: resp
   })
+  */
 })
 
 app.get('/CursosOfrecidos', function (req, res) {    

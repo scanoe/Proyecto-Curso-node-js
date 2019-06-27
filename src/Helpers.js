@@ -231,20 +231,22 @@ hbs.registerHelper('FormularioActualizarUsuario', (Usuario) => {
                   Documento <br>
                   <input type="hidden" class="form-group" name="documento" id="documento" value="${Usuario.documento}" required><br>
                   Nombre <br>
-                  <input type="text"class="form-group" name="nombre" id="nombre" value="${Usuario.nombre}" required><br>
+                  <input type="text" class="form-group" name="nombre" id="nombre" value="${Usuario.nombre}" required><br>
                   Usuario <br>
-                  <input type="text"class="form-group" name="usuario" id="usuario" value="${Usuario.usuario}" required><br>
+                  <input type="text" class="form-group" name="usuario" id="usuario" value="${Usuario.usuario}" required><br>
                    contaseña <br>
                   <input type="password" class="form-group" name="password" id="password" value="${Usuario.password}" required><br>
                   Correo <br>
-                  <input type="text"class="form-group" name="correo" id="correo" value="${Usuario.correo}" required><br>
+                  <input type="text" class="form-group" name="correo" id="correo" value="${Usuario.correo}" required><br>
                   Teléfono <br>
                   <input type="tel" class= "form-group" name="telefono" id="telefono" value="${Usuario.telefono}" required><br><br>
-                  <select class="form-control" id="rol" name ="rol">'
-                  <option value="aspirante">aspirante</option>
-                  <option value="docente">docente</option>
-                  
-                </select>
+                  <select class="form-control" id="rol" name ="rol">'`
+                  if(Usuario.rol== 'aspirante'){
+                    texto=texto+`<option value="aspirante">aspirante</option>
+                  <option value="docente">docente</option>`
+                  }else{texto=texto+`<option value="docente">docente</option>
+                  <option value="aspirante">aspirante</option>`}
+                 texto=texto+ ` </select>
                  
                   <input type="submit" class="form-group" value="Enviar" name="sunbmit" id="submit">
 
@@ -252,4 +254,15 @@ hbs.registerHelper('FormularioActualizarUsuario', (Usuario) => {
             </form>
             </div>`
     return texto;        
+})
+
+hbs.registerHelper('SelectUsuarios', (Usuarios) => {
+  texto=' <select class="form-control" id="UsuarioID" name ="UsuarioID">'
+  Usuarios.forEach((usuario)=> {
+
+  texto = texto +`<option>${usuario.documento}</option>`
+
+})
+texto= texto+`</select>`
+return texto
 })
