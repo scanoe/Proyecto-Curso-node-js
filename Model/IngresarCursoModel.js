@@ -89,9 +89,17 @@ const cursoSchema = new schema({
         type :"Number",
         require:true
     },
+    Docente : {
+        type :"String",
+        require:false
+    },
     modalidad : "String",
     Intensidad: "String",
-    estado: "String"
+    estado: {
+
+        type :"String",
+        require:true
+    }
      })
      cursoSchema.plugin(uniqueValidator)
 const curso = mongoose.model("curso",cursoSchema)

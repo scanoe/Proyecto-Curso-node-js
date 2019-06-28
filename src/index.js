@@ -47,8 +47,10 @@ app.post('/login',function (req,res) {
       if(existe.rol=='coordinador'){
         res.render('PaginaPrincipalCoordinador.hbs',{usuario :existe})
       }else if(existe.rol=='aspirante'){
-        console.log('documento del aspirante'+ existe.documento)
+        //console.log('documento del aspirante'+ existe.documento)
         res.render("PaginaPrincipalAspirante.hbs",{UsuarioID : existe.documento})
+      }else if(existe.rol= 'Docente'){
+        res.render("PaginaDocente.hbs",{UsuarioID : existe.documento})
       }
       }else{  
         res.render("Login.hbs",{mensaje: 'usuario invalido'})
@@ -372,10 +374,26 @@ if (err){
   })
   */
 })
+app.get('/EscogerDocenteCurso',function(req,res){
+modelIngresoUsuario.Usuario.find({rol: 'docente'}).exec((err,docentes)=>{
+  if (err){
+    res.send("Error 404")
+  }else{
+    res.render('EscogerDocenteCerrar',{
+      docentes:docentes,
+      curso: req.query.id
+
+    })
+
+  }
+})
+
+
+})
 
 app.get('/CierraCurso', function (req, res) {
   //let cerrar = modeloIngresoCurso.CerrarCurso(req.query.id)
-  modeloIngresoCurso.curso.findOneAndUpdate({id:req.query.id},{$set:{estado : 'Cerrado'}},{new:true} ).exec((err,result)=>{
+  modeloIngresoCurso.curso.findOneAndUpdate({id:req.query.id},{$set:{estado : 'Cerrado',Docente: req.query.Docente}},{new:true} ).exec((err,result)=>{
     if(err){
 
       res.send("Error 404")
@@ -493,6 +511,9 @@ app.get('/CursosOfrecidos', function (req, res) {
   })
 
 
+  
+
+
 
 /*
   res.render('CursosOfrecidos', {
@@ -500,6 +521,68 @@ app.get('/CursosOfrecidos', function (req, res) {
   }) */
 
 })
+
+app.get('/ListaCursosDocente', function (req, res) {    
+
+  modeloIngresoCurso.curso.find({Docente:req.query.UsuarioID}).exec((err,query)=>{
+    if (err){
+      res.send(err.message)
+    }else{
+      res.render('ListarCursosDelDocente', {
+        Cursos : query,
+        UsuarioID: req.query.UsuarioID
+      })
+    }
+
+  })
+
+})
+
+
+app.get('/ActualizarCursoformulario', function (req, res) {    
+console.log("aca esta el curso id " + req.query.id)
+  modeloIngresoCurso.curso.findOne({id:req.query.id}).exec((err,query)=>{
+    if (err){
+      res.send(err.message)
+    }else{
+      res.render('ActualizarCursoformulario', {
+        Cursos : query,
+        UsuarioID:req.query.UsuarioID
+      })
+    }
+
+  })
+
+})
+
+app.get('/ActualizarCurso', function (req, res) {
+  let cursoupdate ={id:req.query.id,
+    nombre :req.query.nombre,
+    descripcion:req.query.descripcion,
+    valor :req.query.valor,
+    Docente :req.query.Docente,
+     modalidad :req.query.modalidad,
+     Intensidad:req.query.Intensidad,
+     estado:req.query.estado}    
+  
+    modeloIngresoCurso.curso.findOneAndUpdate({id:req.query.id},cursoupdate,{new:true}).exec((err,query)=>{
+      if (err){
+        res.send(err.message)
+      }else{
+        res.render('UpdateExitoso', {
+          resultado:query.id,
+          UsuarioID:req.query.UsuarioID
+        })
+      }
+  
+    })
+  
+  })
+
+
+
+
+
 
 mongoose.connect('mongodb://localhost:27017/EducacionContinua', {useNewUrlParser: true},(err,resultado)=>{
 

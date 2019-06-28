@@ -137,6 +137,40 @@ return texto
 
 })
 
+hbs.registerHelper('NavbarDocente', (UsuarioID) => {
+
+  texto =`            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="#">Opciones</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+          <li class="nav-item active">
+              <a class="nav-link" href="/?UsuarioID=${UsuarioID}">Home <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Cursos
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <a class="dropdown-item" href="/ListaCursosDocente?UsuarioID=${UsuarioID}"c>Mis cursos asignados </a>
+      
+              </div>
+          </li>
+          
+      </ul>
+  </div>
+</nav>`
+return texto
+
+})
+
+
+
+
 hbs.registerHelper('SelectCursos', (cursos,UsuarioID) => {
   texto =` <form action="/InscribirCurso" method="post">`+
   '<div class="form-group">'+
@@ -165,14 +199,15 @@ hbs.registerHelper('ListarInscritosxCursos', (Cursos,cursosusuario) => {
   let i = 1
     Cursos.forEach(curso => {
       let usuariosXCurso = modelCursoXUsuario.inscritos(curso.id,cursosusuario);
-      if (curso.estado == 'disponible') {
+      
         texto = texto + `
         <div class="card">
           <div class="card-header" id="heading${i}">
             <h2 class="mb-0">
               <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse${i}" aria-expanded="true" aria-controls="collapse${i}">
-                <div class="text-left">  
+                <div class="text-left">
                 ${curso.nombre} <br>
+                id: ${curso.id}<br>  
                   valor: ${curso.valor} <br>
                   Descripcion: ${curso.descripcion} 
                 </div>
@@ -183,12 +218,16 @@ hbs.registerHelper('ListarInscritosxCursos', (Cursos,cursosusuario) => {
            <div id="collapse${i}" class="collapse" aria-labelledby="heading${i}" data-parent="#accordionExample">
             <div class="card-body">
               <p>Id de Usuarios: ${usuariosXCurso} </p>
-              <a href="/CierraCurso?id=${curso.id}"c>Cerrar Curso</a>           
-            </div>
+              <p>Estado del curso: ${curso.estado} </p>`
+              if(curso.estado=='disponible'){
+                texto=texto+`<a href="/EscogerDocenteCurso?id=${curso.id}">Cerrar Curso</a>`
+              }           
+            texto=texto+ `
+             </div>
         </div>
       </div>
        `
-      }
+      
           i++;
     })
   return texto
@@ -265,4 +304,104 @@ hbs.registerHelper('SelectUsuarios', (Usuarios) => {
 })
 texto= texto+`</select>`
 return texto
+})
+
+hbs.registerHelper('SelectDocente', (Usuarios,curso) => {
+  texto=' <select class="form-control" id="Docente" name ="Docente">'
+  Usuarios.forEach((usuario)=> {
+
+  texto = texto +`<option>${usuario.documento}</option>`
+
+})
+texto= texto+`</select>
+<input type="hidden" id="id" name="id" value="${curso}">
+`
+return texto
+})
+
+hbs.registerHelper('ListarCursosXDocente', (Cursos,UsuarioID) => {
+ 
+  let texto = "<div class='accordion' id='accordionExample'>"
+  let i = 1
+    Cursos.forEach(curso => {
+
+      texto = texto + `
+    <div class="card">
+    <div class="card-header" id="heading${i}">
+      <h2 class="mb-0">
+        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse${i}" aria-expanded="true" aria-controls="collapse${i}">
+        <div class="text-left">  
+        ${curso.nombre} <br>
+          valor: ${curso.valor} <br>
+          Descripcion: ${curso.descripcion} 
+          </div>
+        </button>
+      </h2>
+    </div>
+
+    <div id="collapse${i}" class="collapse" aria-labelledby="heading${i}" data-parent="#accordionExample">
+      <div class="card-body">
+      <p>ID: ${curso.id} </p>
+      <p>Descripcion: ${curso.descripcion} </p>
+      <p>valor: ${curso.valor} </p>
+      <p>modalidad: ${curso.modalidad} </p>
+      <p>Intensidad: ${curso.Intensidad} </p>
+      <p>estado: ${curso.estado} </p>
+      <a href="/ActualizarCursoformulario?id=${curso.id}&UsuarioID=${UsuarioID}">Actualizar Datos del Curso </a>
+      
+      </div>
+    </div>
+  </div>
+   `
+      i++;
+    })
+   
+  return texto
+})
+
+hbs.registerHelper('FormularioActualizarCurso', (curso,UsuarioID) => {
+  console.log(curso)
+ 
+  let texto = `<div  class="container">
+  <h1>Ingreso de nuevo curso</h1>
+  <form action="/ActualizarCurso">
+  <div class="form-group">
+      <input type="hidden" class="form-group" name="id" id="id" value="${curso.id}" ><br>
+      Nombre <br>
+      <input type="text"class="form-group" name="nombre" id="nombre" value="${curso.nombre}" ><br>
+      Descripción <br>
+      <input type="text"class="form-group" name="descripcion" id="descripcion"  value="${curso.descripcion}"><br>
+      valor <br>
+      <input type="number"class="form-group" name="valor" id="valor" value="${curso.valor}"><br>
+      modalidad <br>
+      <select name="modalidad" class="form-group" id="modalidad" >`
+      if(curso.valor=='virtual'){
+        texto =texto+  `<option value="virtual">virtual</option>
+          <option value="presencial">presencial</option>`
+      }else{
+        texto =texto+  `<option value="presencial">presencial</option>
+        <option value="virtual">virtual</option>`
+      }
+          texto =texto+  `</select><br>  
+      Intensidad horaria <br>
+      <input type="number" class="form-group" name= "Intensidad" id="Intensidad" value="${curso.Intensidad}"><br>
+      estado <br>
+      <select name="estado" class="form-group" id="estado" >`
+      if(curso.estado=='disponible'){
+        texto =texto+  `<option value="disponible">disponible</option>
+          <option value="Cerrado">Cerrado</option>`
+      }else{
+        texto =texto+  `<option value="Cerrado">Cerrado</option>
+        <option value="disponible">disponible</option>`
+      }
+      texto =texto+  `</select>
+      <input type="hidden" class="form-group" name="Docente" id="Docente" value="${UsuarioID}" >
+      <input type="hidden" class="form-group" name="UsuarioID" id="UsuarioID" value="${UsuarioID}" ><br>
+      <input type="submit" class="form-group" value="Enviar" name="sunbmit" id="submit">
+  </div>
+  </form>
+  </div>`
+
+   
+  return texto
 })

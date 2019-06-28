@@ -93,7 +93,8 @@ const usuarioSchema = new schema({
     },
     usuario :{
         type :"String",
-        require:true
+        require:true,
+        unique:true
     },
     correo:{
         type :"String",
