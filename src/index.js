@@ -9,7 +9,9 @@ const hbs = require('hbs')
 const bodyParser = require("body-parser")
 const mongoose = require('mongoose');
 const helpers = require('./Helpers')
-
+const session = require('express-session')
+const port = process.env.PORT || 3000;var MemoryStore = require('memorystore')(session)
+const URLDB = process.env.URLDB || 'mongodb://localhost:27017/EducacionContinua'
 const dirartials=path.join(__dirname,'../partials');
 console.log(dirartials)
 //console.log('C:/Users/Sebastian/Desktop/node/proyecto curso/partials')
@@ -22,6 +24,19 @@ app.use(bodyParser.urlencoded({extended :false}))
 const dirpublico = path.join(__dirname,'../public')
 console.log(dirpublico)
 app.use(express.static(dirpublico))
+app.use(session({
+  cookie: { maxAge: 86400000 },
+  store: new MemoryStore({
+    checkPeriod: 86400000 // prune expired entries every 24h
+  }),
+  secret: 'keyboard cat'
+}))
+
+app.use(session({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true
+}))
 
 
 app.get('/', function (req, res) {  
@@ -44,6 +59,9 @@ app.post('/login',function (req,res) {
 
     if(existe){
       //console.log(existe)
+      req.session.usuario = existe.documento
+      req.session.nombre = existe.nombre
+      req.session.rol = existe.rol
       if(existe.rol=='coordinador'){
         res.render('PaginaPrincipalCoordinador.hbs',{usuario :existe})
       }else if(existe.rol=='aspirante'){
@@ -584,7 +602,7 @@ app.get('/ActualizarCurso', function (req, res) {
 
 
 
-mongoose.connect('mongodb://localhost:27017/EducacionContinua', {useNewUrlParser: true},(err,resultado)=>{
+mongoose.connect(URLDB, {useNewUrlParser: true},(err,resultado)=>{
 
 
 if(err){
@@ -595,7 +613,9 @@ if(err){
     console.log("Conectado a mongo")
 }
 });
-app.listen(3000)
+app.listen(port, () => {
+  console.log('servidor en el puerto ' + port)
+});
 
 
 
