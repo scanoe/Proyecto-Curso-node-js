@@ -11,5 +11,7 @@ para el uso del aplicativo se debe de entrar a  sus diferentes opciones atraves 
 
 para entrar a manera de cordinador el usuario es el siguiente : Elcordi Contraseña :123456
 
+Adicionalmente la aplicacion en Heroku esta en el siguiente link:
+https://fullstackvoyageaplication.herokuapp.com/
 
 Cordialmente Equipo Full stack voyage
