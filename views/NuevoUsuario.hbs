@@ -43,21 +43,22 @@
 <div class="container-fluid">
     <h3>Ingrese sus datos</h3>
     <p>todos los datos son obligatorios</p>
-    <form action="/IngresarUsuario">
+    <form action="/IngresarUsuario" method="post" enctype="multipart/form-data">
 <div class="form-group">
     Documento <br>
     <input type="number" class="form-group" name="documento" id="documento" required><br>
     Nombre <br>
-    <input type="text"class="form-group" name="nombre" id="nombre" required><br>
+    <input type="text" class="form-group" name="nombre" id="nombre" required><br>
     Usuario <br>
-    <input type="text"class="form-group" name="usuario" id="usuario" required><br>
+    <input type="text" class="form-group" name="usuario" id="usuario" required><br>
      contaseña <br>
     <input type="password" class="form-group" name="password" id="password" required><br>
     Correo <br>
-    <input type="text"class="form-group" name="correo" id="correo" required><br>
+    <input type="text" class="form-group" name="correo" id="correo" required><br>
     Teléfono <br>
     <input type="tel" class= "form-group" name="telefono" id="telefono" required><br><br>
-
+    Imagen de Perfil <br>
+    <input type="file" class= "form-group" name="foto" id="foto" required><br><br>
    
     <input type="submit" class="form-group" value="Enviar" name="sunbmit" id="submit">
 
@@ -79,6 +80,8 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
+        <script src="socket.io/socket.io.js"></script>
+        <script src="src/sockets.js"></script>
 </body>
 
 </html>

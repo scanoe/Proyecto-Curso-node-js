@@ -9,9 +9,15 @@ const hbs = require('hbs')
 const bodyParser = require("body-parser")
 const mongoose = require('mongoose');
 const helpers = require('./Helpers')
+const multer  = require('multer')
 const session = require('express-session')
+const sgMail = require('@sendgrid/mail');
 const port = process.env.PORT || 3000;var MemoryStore = require('memorystore')(session)
 const URLDB = process.env.URLDB || 'mongodb://localhost:27017/EducacionContinua'
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
+ process.env.SENDGRID_API_KEY = 'XXXXX cabiar or la key de verdad'
+ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const dirartials=path.join(__dirname,'../partials');
 console.log(dirartials)
 //console.log('C:/Users/Sebastian/Desktop/node/proyecto curso/partials')
@@ -62,13 +68,19 @@ app.post('/login',function (req,res) {
       req.session.usuario = existe.documento
       req.session.nombre = existe.nombre
       req.session.rol = existe.rol
+      req.session.correo=existe.correo
+      req.session.user =existe.usuario
+      let avatar
+      if( existe.avatar){
+       avatar = existe.avatar.toString("base64")
+    }
       if(existe.rol=='coordinador'){
-        res.render('PaginaPrincipalCoordinador.hbs',{usuario :existe})
+        res.render('PaginaPrincipalCoordinador.hbs',{usuario :existe,avatar:avatar})
       }else if(existe.rol=='aspirante'){
         //console.log('documento del aspirante'+ existe.documento)
-        res.render("PaginaPrincipalAspirante.hbs",{UsuarioID : existe.documento})
+        res.render("PaginaPrincipalAspirante.hbs",{UsuarioID : existe.documento,avatar:avatar})
       }else if(existe.rol= 'Docente'){
-        res.render("PaginaDocente.hbs",{UsuarioID : existe.documento})
+        res.render("PaginaDocente.hbs",{UsuarioID : existe.documento,avatar:avatar})
       }
       }else{  
         res.render("Login.hbs",{mensaje: 'usuario invalido'})
@@ -125,26 +137,49 @@ app.get('/IngresarCurso', function (req, res) {
   })
 */
 })
-
-app.get('/IngresarUsuario', function (req, res) {
-  console.log(req.query)
-  let resp = modelIngresoUsuario.CrearUsuario(req.query)
+/*
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'public/uploads')
+  },
+  filename: function (req, file, cb) {
+    cb(null,"imagenp-"+req.body.documento+path.extname( file.originalname))
+  }
+})
+var upload = multer({ storage: storage })
+*/
+ 
+var upload = multer({ })
+app.post('/IngresarUsuario',upload.single('foto'), function (req, res) {
+  console.log(req.body)
+  //let resp = modelIngresoUsuario.CrearUsuario(req.query)
   let estudiante = new modelIngresoUsuario.Usuario({
-    documento:req.query.documento,
-    nombre :req.query.nombre,
-    usuario :req.query.usuario,
-    correo: req.query.correo,
-    password:req.query.password,
-    telefono:req.query.telefono,
-    rol:'aspirante'
+    documento:req.body.documento,
+    nombre :req.body.nombre,
+    usuario :req.body.usuario,
+    correo: req.body.correo,
+    password:req.body.password,
+    telefono:req.body.telefono,
+    rol:'aspirante',
+    avatar:req.file.buffer
      })
      estudiante.save((err,resul)=>{
        if (err){
          console.log("Error de insercion")
+         console.log(err)
+         res.render("Login.hbs", {mensaje: 'Su Registro fue Erroneo'})
+      
        }
        else{
+        let msg ={
+          to: req.body.correo,
+          from :"scanoe@unal.edu.co",
+          subject: 'Bienvenido a educacion continua',
+          text: "Bienvenio  Esperamos te diviertas y aprendas en este nuevo viaje"
+        };
+        sgMail.send(msg);
         res.render("Login.hbs", {mensaje: 'Su Registro fue Exitoso ahora puede ingresar con su usuario y contraseña'})
-       }
+      }
      });
   //res.send(resp)
  // res.render("Login.hbs", {mensaje: 'Su Registro fue Exitoso ahora puede ingresar con su usuario y contraseña'})
@@ -174,6 +209,7 @@ app.get('/ListaCursosDisponibles', function (req, res) {
     if (err){
       res.send(err.message)
     }else{
+      console.log(req.session.correo)
       res.render('ListarCursosDisponibles',{
         Cursos: query,
         UsuarioID: req.query.UsuarioID,
@@ -220,6 +256,16 @@ modeloIngresoCurso.curso.find({}).exec((err,query)=>{
             })
           }else{
             console.log("aca "+query)
+            console.log(req.session.correo)
+            console.log(datos.curso)
+            let msg ={
+              to: req.session.correo,
+              from :"EducacionContinua@gmail.com",
+              subject: 'Bienvenido al curso'+datos.curso ,
+              text: "Bienvenio  Esperamos te diviertas y aprendas en este nuevo viaje"
+            };
+            sgMail.send(msg)
+
             res.render('ListarCursosDisponibles',{
               Cursos: query,
               UsuarioID: req.body.UsuarioID,
@@ -596,12 +642,61 @@ app.get('/ActualizarCurso', function (req, res) {
     })
   
   })
+let usuarioschat =0
 
 
+  app.get('/chat', function (req, res) {    
+
+    res.render('chat',{
+      UsuarioChat:req.query.NuevoUsuario,
+      usuario :req.session.user,
+      nombre:req.session.nombre,
+      UsuarioID: req.session.usuario,
+      rol: req.session.rol
+    })
+   
+  
+  })
 
 
+  app.get('/Ingresochat', function (req, res) {    
 
+    res.render('IngresoAlChat',{
+      usuario :req.session.user,
+      nombre:req.session.nombre,
+      UsuarioID: req.session.usuario,
+      rol: req.session.rol
+    })
+   
+  
+  })
 
+//sockets.io
+io.on('connection', client => {
+  
+console.log('un usuario se ha conectado  ')
+
+client.emit('mensaje','bienvenido')
+
+client.on('mensaje',(informacion)=>{
+  console.log(informacion)
+})
+client.on('contador',()=>{
+  usuarioschat ++
+  console.log(usuarioschat)
+  io.emit('contador',usuarioschat )
+})
+
+client.on('texto',(texto,callback)=>{
+   
+  console.log(texto)
+  io.emit('texto',texto )
+  callback()
+})
+
+});
+
+//
 mongoose.connect(URLDB, {useNewUrlParser: true},(err,resultado)=>{
 
 
@@ -613,7 +708,10 @@ if(err){
     console.log("Conectado a mongo")
 }
 });
-app.listen(port, () => {
+
+
+
+server.listen(port, () => {
   console.log('servidor en el puerto ' + port)
 });
 

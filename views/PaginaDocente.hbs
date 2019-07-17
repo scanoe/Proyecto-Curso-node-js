@@ -2,6 +2,9 @@
     <h1 class="align-content-center">Bienvenido a Tu Página de Educación continua!!!</h1><br>
     <h3> Tu rol es de: Docente </h3><br>
     <h3> Tu id es: {{UsuarioID}} </h3>
+    {{#if avatar}}
+    <img src="data:img/png;base64,{{avatar}}",class="img-fluid">
+    {{/if}}
 
 
 {{>footer}}

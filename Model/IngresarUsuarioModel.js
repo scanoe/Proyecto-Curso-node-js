@@ -7,7 +7,9 @@ let listaUsuarios=[];
 const CrearUsuario =(usuario)=>{
     preparar();
     let  existeid =listaUsuarios.find(C => C.documento ==usuario.documento);
-    if(existeid){console.log('El Documento de identidad ya existe')
+    if(existeid){
+    
+        console.log('El Documento de identidad ya existe')
     return 'El id existe'
     }
      user ={
@@ -98,7 +100,8 @@ const usuarioSchema = new schema({
     },
     correo:{
         type :"String",
-        require:true
+        require:true,
+        trim :true
     },
     password:{
         type :"String",
@@ -112,6 +115,9 @@ const usuarioSchema = new schema({
         type :"String",
         require:true
 
+    },
+    avatar:{
+        type:Buffer
     }
      
 

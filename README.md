@@ -1,4 +1,4 @@
-Este esl el entregable del equipo Full stack Voyage
+Este es el entregable del equipo Full stack Voyage
 
 Integrantes:
  Lina Maria Vargas Correa
