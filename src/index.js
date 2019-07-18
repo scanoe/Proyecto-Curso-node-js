@@ -2,6 +2,8 @@
 const modeloIngresoCurso= require('./../Model/IngresarCursoModel')
 const modelIngresoUsuario = require('./../Model/IngresarUsuarioModel')
 const modelCursoXUsuario = require('./../Model/CursoXUsuarioModel')
+const { Usuarios } = require('./UsuariosChat')
+const listaUsuariosChat = new Usuarios();
 const express = require('express')
 const app = express()
 const path= require('path')
@@ -16,7 +18,7 @@ const port = process.env.PORT || 3000;var MemoryStore = require('memorystore')(s
 const URLDB = process.env.URLDB || 'mongodb://localhost:27017/EducacionContinua'
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
- process.env.SENDGRID_API_KEY = 'XXXXX cabiar or la key de verdad'
+ process.env.SENDGRID_API_KEY = 'Cambiar por la key'
  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const dirartials=path.join(__dirname,'../partials');
 console.log(dirartials)
@@ -173,7 +175,7 @@ app.post('/IngresarUsuario',upload.single('foto'), function (req, res) {
        else{
         let msg ={
           to: req.body.correo,
-          from :"scanoe@unal.edu.co",
+          from :"FullStackvoyageEC@gmail.com",
           subject: 'Bienvenido a educacion continua',
           text: "Bienvenio  Esperamos te diviertas y aprendas en este nuevo viaje"
         };
@@ -255,12 +257,10 @@ modeloIngresoCurso.curso.find({}).exec((err,query)=>{
               mensaje:'El curso ya fue inscrito'
             })
           }else{
-            console.log("aca "+query)
-            console.log(req.session.correo)
-            console.log(datos.curso)
+    
             let msg ={
               to: req.session.correo,
-              from :"EducacionContinua@gmail.com",
+              from :"FullStackvoyageEC@gmail.com",
               subject: 'Bienvenido al curso'+datos.curso ,
               text: "Bienvenio  Esperamos te diviertas y aprendas en este nuevo viaje"
             };
@@ -673,7 +673,7 @@ let usuarioschat =0
 
 //sockets.io
 io.on('connection', client => {
-  
+  /*
 console.log('un usuario se ha conectado  ')
 
 client.emit('mensaje','bienvenido')
@@ -686,11 +686,25 @@ client.on('contador',()=>{
   console.log(usuarioschat)
   io.emit('contador',usuarioschat )
 })
+*/
 
+client.on('usuarionuevo',(usuario)=>{
+  
+ let conectados = listaUsuariosChat.agregarUsuario(client.id,usuario)
+ let texto = usuario +' se ha conectado al chat'
+ io.emit('usuarionuevo',texto)  
+})
+
+client.on('disconnect',()=>{
+  let usuarioBorrado =listaUsuariosChat.borrarUsuario(client.id)
+  let texto = 'Se ha desconectado '+usuarioBorrado.nombre
+io.emit('usuarioDesconectado',texto)
+})
 client.on('texto',(texto,callback)=>{
-   
+   let usuario =listaUsuariosChat.getUsuario(client.id)
+   let text = usuario.nombre +" dice: "+ texto
   console.log(texto)
-  io.emit('texto',texto )
+  io.emit('texto',text )
   callback()
 })
 

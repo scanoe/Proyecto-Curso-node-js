@@ -1,4 +1,5 @@
 let socket=io()
+/*
 socket.on("mensaje",(informacion)=>{
 
     console.log(informacion)
@@ -11,16 +12,27 @@ socket.emit('contador')
 socket.on('contador',(contador)=>{
     console.log(contador)
 })
-
+*/
+var param= new URLSearchParams(window.location.search)
+var user =param.get('NuevoUsuario')
+socket.on('connect',()=>{
+socket.emit('usuarionuevo',user)
+})
+socket.on('usuarionuevo',(texto)=>{
+    
+    chat.innerHTML = chat.innerHTML + texto+"<br>"
+})
+socket.on('usuarioDesconectado',(texto)=>{
+    
+    chat.innerHTML = chat.innerHTML + texto+"<br>"
+})
 const formulario =document.querySelector('#formularioChat')
 const mensaje = formulario.querySelector('#text')
 const chat =document.querySelector('#chat')
 formulario.addEventListener('submit',(datos)=>{
     datos.preventDefault()
-    const nombre = datos.target.elements.nombre.value
-    const texto = datos.target.elements.text.value
-    socket.emit("texto",{nombre:nombre,
-                            mensaje:texto},()=>{
+
+    socket.emit("texto",mensaje.value,()=>{
                                
                                 mensaje.value=''
                                 mensaje.focus()
@@ -28,6 +40,6 @@ formulario.addEventListener('submit',(datos)=>{
 })
 
 socket.on("texto",(text)=>{
-    chat.innerHTML = chat.innerHTML + text.nombre +" dice: "+text.mensaje +"<br>"
+    chat.innerHTML = chat.innerHTML + text +"<br>"
     console.log(text)
 })

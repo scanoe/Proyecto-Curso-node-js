@@ -15,16 +15,16 @@ class Usuarios{
     }
 
     getUsuario(id){
-       let usuario = this.usuarios.filter(user => usuario.id==id)
+       let usuario = this.usuarios.filter(user => user.id==id)[0]
         return usuario
     }
 
     borrarUsuario(id){
         let usuarioBorrado =this.getUsuario(id)
-        usuarios = this.usuarios.filter(user => user.id !=id)
+        let usuarios = this.usuarios.filter(user => user.id !=id)
         return usuarioBorrado
     }
   
 }
 
-exportsmodule.exports={Usuarios}
+module.exports={Usuarios}
