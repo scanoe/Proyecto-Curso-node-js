@@ -43,3 +43,9 @@ socket.on("texto",(text)=>{
     chat.innerHTML = chat.innerHTML + text +"<br>"
     console.log(text)
 })
+
+
+socket.on("MensajeBroadcast",(text)=>{
+    alert(text)
+    console.log(text)
+})

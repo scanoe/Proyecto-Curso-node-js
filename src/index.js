@@ -18,7 +18,7 @@ const port = process.env.PORT || 3000;var MemoryStore = require('memorystore')(s
 const URLDB = process.env.URLDB || 'mongodb://localhost:27017/EducacionContinua'
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
- process.env.SENDGRID_API_KEY = 'Cambiar por la key'
+ process.env.SENDGRID_API_KEY = 'Aca_va_la_key_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const dirartials=path.join(__dirname,'../partials');
 console.log(dirartials)
@@ -671,6 +671,17 @@ let usuarioschat =0
   
   })
 
+  app.get('/MensajeUsuarios', function (req, res) {    
+
+    res.render('mensajeBroadcast',{
+      usuario :req.session.user,
+      nombre:req.session.nombre,
+      UsuarioID: req.session.usuario,
+      rol: req.session.rol
+    })
+
+  })
+
 //sockets.io
 io.on('connection', client => {
   /*
@@ -696,9 +707,11 @@ client.on('usuarionuevo',(usuario)=>{
 })
 
 client.on('disconnect',()=>{
+  console.log('holi')
   let usuarioBorrado =listaUsuariosChat.borrarUsuario(client.id)
+  if(usuarioBorrado){
   let texto = 'Se ha desconectado '+usuarioBorrado.nombre
-io.emit('usuarioDesconectado',texto)
+io.emit('usuarioDesconectado',texto)}
 })
 client.on('texto',(texto,callback)=>{
    let usuario =listaUsuariosChat.getUsuario(client.id)
@@ -707,6 +720,15 @@ client.on('texto',(texto,callback)=>{
   io.emit('texto',text )
   callback()
 })
+
+client.on('MensajeBroadcast',(texto,callback)=>{
+  
+  let text = "Mensaje Del cordinador: "+ texto
+ console.log(texto)
+ client.broadcast.emit('MensajeBroadcast',text )
+ callback()
+})
+
 
 });
 
