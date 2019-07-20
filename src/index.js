@@ -682,6 +682,27 @@ let usuarioschat =0
 
   })
 
+  app.get('/Perfil', function (req,res){
+    modelIngresoUsuario.Usuario.findOne({documento:req.session.usuario},(err,result)=>{
+      let avatar
+      if(result.avatar){
+         avatar =result.avatar.toString("base64")}
+      
+      res.render('Perfil',{
+
+        UsuarioID: result.documento,
+        Usuario: result,
+        Coordinador : (result.rol == 'coordinador'),
+        docente: (result.rol == 'docente'),
+        aspirante : (result.rol == 'aspirante'),
+        avatar: avatar
+      })
+
+    })
+
+  
+  })
+
 //sockets.io
 io.on('connection', client => {
   /*
@@ -707,7 +728,7 @@ client.on('usuarionuevo',(usuario)=>{
 })
 
 client.on('disconnect',()=>{
-  console.log('holi')
+  
   let usuarioBorrado =listaUsuariosChat.borrarUsuario(client.id)
   if(usuarioBorrado){
   let texto = 'Se ha desconectado '+usuarioBorrado.nombre
@@ -716,7 +737,7 @@ io.emit('usuarioDesconectado',texto)}
 client.on('texto',(texto,callback)=>{
    let usuario =listaUsuariosChat.getUsuario(client.id)
    let text = usuario.nombre +" dice: "+ texto
-  console.log(texto)
+  
   io.emit('texto',text )
   callback()
 })
@@ -724,7 +745,7 @@ client.on('texto',(texto,callback)=>{
 client.on('MensajeBroadcast',(texto,callback)=>{
   
   let text = "Mensaje Del cordinador: "+ texto
- console.log(texto)
+ 
  client.broadcast.emit('MensajeBroadcast',text )
  callback()
 })

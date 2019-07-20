@@ -132,7 +132,9 @@ hbs.registerHelper('NavbarAspirante', (UsuarioID) => {
           <li class="nav-item active">
             <a class="nav-link" href="/Ingresochat">Chat<span class="sr-only"></span></a>
           </li>
-          
+          <li class="nav-item active">
+            <a class="nav-link" href="/Perfil">Mi perfil<span class="sr-only"></span></a>
+          </li> 
       </ul>
   </div>
 </nav>`
@@ -164,9 +166,11 @@ hbs.registerHelper('NavbarDocente', (UsuarioID) => {
               </div>
           </li>
           <li class="nav-item active">
-          <a class="nav-link" href="/Ingresochat">Chat<span class="sr-only"></span></a>
-        </li>
-          
+            <a class="nav-link" href="/Ingresochat">Chat<span class="sr-only"></span></a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="/Perfil">Mi perfil<span class="sr-only"></span></a>
+          </li>
       </ul>
   </div>
 </nav>`
