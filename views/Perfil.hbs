@@ -11,7 +11,7 @@
     <h3>Perfil de : {{Usuario.usuario}}</h3>
     
 {{#if avatar}}
-    <img src="data:img/png;base64,{{avatar}}",class="img-fluid">
+    <img src="data:img/*;base64,{{avatar}}",class="img-fluid">
     {{else}}
     <h2>No Disponible</h2>
 {{/if}}
@@ -28,7 +28,4 @@
 <h6>{{Usuario.rol}}</h6>
 
 </div>
-
-
-
 {{>footer}}

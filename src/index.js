@@ -18,7 +18,7 @@ const port = process.env.PORT || 3000;var MemoryStore = require('memorystore')(s
 const URLDB = process.env.URLDB || 'mongodb://localhost:27017/EducacionContinua'
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
- process.env.SENDGRID_API_KEY = 'Aca_va_la_key_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+ process.env.SENDGRID_API_KEY = 'Aca va la key xxxxxxxxxxxxxxxxxx'
  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const dirartials=path.join(__dirname,'../partials');
 console.log(dirartials)
@@ -151,10 +151,23 @@ var storage = multer.diskStorage({
 var upload = multer({ storage: storage })
 */
  
-var upload = multer({ })
+var upload = multer({
+   fileFilter (req, file, cb) {
+ 
+  if(!file.originalname.match(/\.(jpg|png|jpeg)$/)){
+   
+    cb(new Error("Archivo no valido"))
+  }
+  cb(null, true)
+}})
 app.post('/IngresarUsuario',upload.single('foto'), function (req, res) {
   console.log(req.body)
   //let resp = modelIngresoUsuario.CrearUsuario(req.query)
+  let archivo
+  if(req.file){
+   archivo =req.file.buffer
+
+  }
   let estudiante = new modelIngresoUsuario.Usuario({
     documento:req.body.documento,
     nombre :req.body.nombre,
@@ -163,7 +176,7 @@ app.post('/IngresarUsuario',upload.single('foto'), function (req, res) {
     password:req.body.password,
     telefono:req.body.telefono,
     rol:'aspirante',
-    avatar:req.file.buffer
+    avatar: archivo
      })
      estudiante.save((err,resul)=>{
        if (err){
@@ -177,10 +190,10 @@ app.post('/IngresarUsuario',upload.single('foto'), function (req, res) {
           to: req.body.correo,
           from :"FullStackvoyageEC@gmail.com",
           subject: 'Bienvenido a educacion continua',
-          text: "Bienvenio  Esperamos te diviertas y aprendas en este nuevo viaje"
+          text: "Bienvenio a Educacion continua Esperamos te diviertas y aprendas en este nuevo viaje"
         };
         sgMail.send(msg);
-        res.render("Login.hbs", {mensaje: 'Su Registro fue Exitoso ahora puede ingresar con su usuario y contraseña'})
+        res.render("Login.hbs", {mensaje: 'Su Registro  fue Exitoso ahora puede ingresar con su usuario y contraseña'})
       }
      });
   //res.send(resp)
@@ -262,7 +275,7 @@ modeloIngresoCurso.curso.find({}).exec((err,query)=>{
               to: req.session.correo,
               from :"FullStackvoyageEC@gmail.com",
               subject: 'Bienvenido al curso'+datos.curso ,
-              text: "Bienvenio  Esperamos te diviertas y aprendas en este nuevo viaje"
+              text: "Bienvenio  Esperamos te diviertas y aprendas en este nuevo viaje dentro del curso "+datos.curso 
             };
             sgMail.send(msg)
 
