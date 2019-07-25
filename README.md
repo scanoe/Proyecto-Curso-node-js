@@ -1,9 +1,9 @@
-#Este es el entregable del equipo Full stack Voyage
+# Este es el entregable del equipo Full stack Voyage
 
-##Integrantes:
-*Lina Maria Vargas Correa
-*Erika Marcela Romero Gomez
-*Sebastian Cano Estrada
+## Integrantes:
+* Lina Maria Vargas Correa
+* Erika Marcela Romero Gomez
+* Sebastian Cano Estrada
   
  # IMPORTATE!!!
   **si desea instalar este repositorio debe porveer una key de sendgrid en el archivo src/index.js linea 21  esto debido a que n caso de subir esta key sendgrid invalida la cuenta asociada y no permite el envio de correos**
